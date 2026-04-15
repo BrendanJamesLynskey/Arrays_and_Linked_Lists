@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arrays and Linked Lists</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+  :root {
+    --amber:  #f5a623;
+    --green:  #4ecb8d;
+    --purple: #a78bfa;
+    --blue:   #60a5fa;
+    --red:    #f87171;
+    --bg:     #0a0a0f;
+    --bg2:    #10101a;
+    --bg3:    #181824;
+    --border: #2a2a3a;
+    --text:   #e8e8f0;
+    --muted:  #8888a8;
+  }
+
+  .reveal-viewport { background: var(--bg); }
+  .reveal .slides section { background: transparent; }
+
+  .reveal { font-family: 'DM Sans', sans-serif; color: var(--text); }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Playfair Display', serif; font-weight: 700; }
+  .reveal h1 { font-size: 1.6em; color: var(--amber); line-height: 1.1; }
+  .reveal h2 { font-size: 1.1em; color: var(--amber); margin-bottom: .2em; }
+  .reveal h3 { font-size: .78em; color: var(--green); margin-bottom: .15em; }
+  .reveal p  { font-size: .56em; line-height: 1.45; color: var(--text); }
+  .reveal li { font-size: .54em; line-height: 1.45; margin-bottom: .1em; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; font-size: .72em; }
+  .reveal pre  { box-shadow: none; background: var(--bg3); border: 1px solid var(--border);
+                 border-radius: 6px; padding: .3em .5em; margin: .25em 0; }
+  .reveal pre code { font-size: .52em; line-height: 1.35; background: transparent; color: #cdd6f4; }
+
+  /* ── slide chrome ── */
+  .slide-hdr {
+    display: flex; align-items: center; gap: .4em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: .2em; margin-bottom: .3em;
+  }
+  .slide-hdr .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .42em; font-weight: 500;
+    color: var(--bg); background: var(--amber);
+    padding: .1em .4em; border-radius: 3px;
+    letter-spacing: .04em;
+  }
+  .slide-hdr h2 { margin: 0; font-size: .95em; }
+
+  /* ── two-column ── */
+  .cols   { display: grid; gap: .5em; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cols-6040 { grid-template-columns: 6fr 4fr; }
+  .cols-4060 { grid-template-columns: 4fr 6fr; }
+
+  /* ── cards ── */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 6px; padding: .35em .6em;
+  }
+  .card.amber { border-left: 3px solid var(--amber); }
+  .card.green { border-left: 3px solid var(--green); }
+  .card.purple{ border-left: 3px solid var(--purple); }
+  .card.blue  { border-left: 3px solid var(--blue); }
+  .card.red   { border-left: 3px solid var(--red); }
+  .card h3 { font-size: .64em; margin: 0 0 .12em; }
+  .card p  { font-size: .52em; margin: 0; color: #b8b8d0; }
+  .card ul { margin: 0; padding-left: 1em; }
+  .card li { font-size: .52em; color: #b8b8d0; margin-bottom: .02em; }
+
+  /* ── table ── */
+  .reveal table { width: 100%; border-collapse: collapse; font-size: .5em; }
+  .reveal table th { background: var(--bg3); color: var(--amber); font-weight: 600;
+                     padding: .2em .4em; border: 1px solid var(--border); text-align: left; }
+  .reveal table td { padding: .18em .4em; border: 1px solid var(--border); color: #ccc; }
+  .reveal table tr:nth-child(even) td { background: #0e0e18; }
+
+  /* ── accent spans ── */
+  .a  { color: var(--amber); font-weight: 600; }
+  .g  { color: var(--green); font-weight: 600; }
+  .p  { color: var(--purple); font-weight: 600; }
+  .b  { color: var(--blue); font-weight: 600; }
+  .r  { color: var(--red); font-weight: 600; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── SVG graph diagrams ── */
+  svg.diagram { display: block; margin: 0 auto; overflow: visible; }
+
+  /* ── pill badges ── */
+  .pill {
+    display: inline-block; font-family: 'JetBrains Mono', monospace;
+    font-size: .44em; padding: .08em .4em; border-radius: 99px;
+    border: 1px solid; margin: 0 .08em;
+  }
+  .pill.amber { color: var(--amber); border-color: var(--amber); }
+  .pill.green { color: var(--green); border-color: var(--green); }
+  .pill.purple{ color: var(--purple); border-color: var(--purple); }
+  .pill.blue  { color: var(--blue); border-color: var(--blue); }
+
+  /* ── footer — hidden ── */
+  .reveal .slide-footer { display: none; }
+  /* title slide special */
+  .title-slide h1 { font-size: 1.8em; }
+  .title-slide .subtitle {
+    font-size: .7em; color: var(--green); font-family: 'DM Sans', sans-serif;
+    font-weight: 300; letter-spacing: .04em; margin: .3em 0 .6em;
+  }
+  .title-slide .meta { font-size: .48em; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* ── super-step animator ── */
+  .ss-row {
+    display: flex; gap: .25em; align-items: center;
+    margin: .1em 0; font-size: .55em; font-family: 'JetBrains Mono', monospace;
+  }
+  .ss-node {
+    padding: .2em .55em; border-radius: 5px; font-size: .9em;
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text);
+  }
+  .ss-node.active { background: #1a2a1a; border-color: var(--green); color: var(--green); }
+  .ss-node.done   { background: #1a1a2a; border-color: var(--purple); color: var(--purple); }
+  .ss-arrow { color: var(--amber); }
+  .ss-label { font-size: .8em; color: var(--muted); margin-left: .3em; }
+
+  /* reduce default margins */
+  .reveal ul, .reveal ol { margin: .15em 0 .15em 1em; }
+.reveal .slides > section { display: flex !important; flex-direction: column !important; overflow-y: auto !important; align-items: stretch !important; justify-content: flex-start !important; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 01 — Title
+══════════════════════════════════════════════════════════════════ -->
+<section class="title-slide" data-background-color="#0a0a0f">
+  <div style="font-family:'JetBrains Mono',monospace; font-size:.5em; color:var(--muted); margin-bottom:.4em; letter-spacing:.1em;">COMPUTER SCIENCE FUNDAMENTALS SERIES</div>
+  <h1>Arrays and<br>Linked Lists</h1>
+  <div class="subtitle">
+    Contiguous memory · Dynamic arrays · Singly linked ·<br>
+    Doubly linked · Skip lists · Cache performance
+  </div>
+  <div style="width:60px; height:3px; background:var(--amber); margin-bottom:1.4em;"></div>
+  <div class="meta">
+    Mid-level software engineer track &nbsp;·&nbsp; 20 slides
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 02 — Contiguous vs Linked Memory
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">02</span>
+    <h2>Contiguous vs Linked Memory</h2>
+  </div>
+  <div class="cols cols-2">
+    <div class="card amber">
+      <h3>Contiguous allocation</h3>
+      <p>Elements stored in adjacent memory addresses. Knowing the base address and element size gives constant-time access to any element.</p>
+      <ul>
+        <li>Memory allocated as a single block</li>
+        <li>Address of element <code>i</code> = <code>base + i * sizeof(element)</code></li>
+        <li>CPU cache prefetcher thrives on sequential access</li>
+        <li>Resizing requires allocating a new block and copying all elements</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Linked allocation</h3>
+      <p>Each element (node) stores a pointer to the next node. Nodes can live anywhere in the heap.</p>
+      <ul>
+        <li>Memory allocated per-node, on demand</li>
+        <li>No wasted capacity — grows one node at a time</li>
+        <li>No reallocation or copying on insert</li>
+        <li>Pointer chasing defeats CPU cache prefetch</li>
+        <li>Extra memory overhead per node (one or two pointers)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card blue" style="margin-top:0.5em">
+    <p><strong style="color:var(--amber)">Fundamental trade-off:</strong> arrays optimise for <em>read</em> performance; linked lists optimise for <em>insert/delete</em> flexibility.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 03 — Static Arrays
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">03</span>
+    <h2>Static Arrays</h2>
+  </div>
+  <p>A fixed-size, contiguous block of memory allocated at compile time (stack) or at runtime with a known size.</p>
+  <div class="cols cols-6040">
+    <div>
+      <h3>Memory layout</h3>
+      <pre><code>Base address: 0x1000
+Element size: 4 bytes (int32)
+
+Index:   [  0  ] [  1  ] [  2  ] [  3  ] [  4  ]
+Address: 0x1000  0x1004  0x1008  0x100C  0x1010
+Value:      10      25      37      42      58</code></pre>
+      <h3>Declaration examples</h3>
+      <pre><code class="language-c">int scores[5] = {10, 25, 37, 42, 58};   // stack
+int *heap_arr = malloc(5 * sizeof(int)); // heap</code></pre>
+    </div>
+    <div>
+      <h3>Characteristics</h3>
+      <div style="display:flex; flex-direction:column; gap:.25em; margin-top:0.2em">
+        <div style="display:flex; align-items:flex-start; gap:.5em; background:var(--bg3); border-radius:6px; padding:.3em .5em; font-size:.5em; border:1px solid var(--border);">
+          <span style="color:var(--amber); font-weight:600; min-width:1em;">O(1)</span>
+          <span style="color:var(--text); line-height:1.4">Random access — direct address calculation</span>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:.5em; background:var(--bg3); border-radius:6px; padding:.3em .5em; font-size:.5em; border:1px solid var(--border);">
+          <span style="color:var(--red); font-weight:600; min-width:1em;">O(n)</span>
+          <span style="color:var(--text); line-height:1.4">Insertion/deletion — shift elements to maintain order</span>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:.5em; background:var(--bg3); border-radius:6px; padding:.3em .5em; font-size:.5em; border:1px solid var(--border);">
+          <span style="color:var(--green); font-weight:600; min-width:1em;">0</span>
+          <span style="color:var(--text); line-height:1.4">Per-element overhead — no pointers, no metadata</span>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:.5em; background:var(--bg3); border-radius:6px; padding:.3em .5em; font-size:.5em; border:1px solid var(--border);">
+          <span style="color:var(--purple); font-weight:600; min-width:1em;">Fixed</span>
+          <span style="color:var(--text); line-height:1.4">Size determined at creation — cannot grow or shrink</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 04 — Array Indexing & Cache Locality
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">04</span>
+    <h2>Array Indexing &amp; Cache Locality</h2>
+  </div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Why O(1) access matters</h3>
+      <p>The formula <code>base + index * element_size</code> is a single arithmetic operation. No matter the array size, access time is constant.</p>
+      <h3>Spatial locality</h3>
+      <p>Accessing <code>arr[i]</code> loads an entire cache line (64 bytes). If <code>arr[i+1]</code> is next, it is already in L1 cache — a <em>cache hit</em>.</p>
+      <pre><code>Cache line (64 bytes) loaded on access to arr[3]:
+┌────┬────┬────┬────┬────┬────┬────┬────┐
+│ [0]│ [1]│ [2]│ [3]│ [4]│ [5]│ [6]│ [7]│
+└────┴────┴────┴────┴────┴────┴────┴────┘
+               ▲ requested
+        entire line loaded into L1</code></pre>
+    </div>
+    <div>
+      <h3>Cache hierarchy latency</h3>
+      <table>
+        <thead><tr><th>Level</th><th>Latency</th><th>Typical size</th></tr></thead>
+        <tbody>
+          <tr><td><span class="a">L1 cache</span></td><td>~1 ns</td><td>32–64 KB</td></tr>
+          <tr><td><span class="g">L2 cache</span></td><td>~4 ns</td><td>256 KB–1 MB</td></tr>
+          <tr><td><span class="p">L3 cache</span></td><td>~12 ns</td><td>4–32 MB</td></tr>
+          <tr><td><span class="r">Main memory</span></td><td>~100 ns</td><td>8–64 GB</td></tr>
+        </tbody>
+      </table>
+      <div class="card amber" style="margin-top:0.5em">
+        <p>Sequential array traversal achieves near-peak memory bandwidth. Linked list traversal pays the full main-memory latency for each node.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 05 — Dynamic Arrays
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">05</span>
+    <h2>Dynamic Arrays</h2>
+  </div>
+  <p>A resizable array that grows automatically when capacity is exceeded. The underlying storage is still a contiguous block.</p>
+  <div class="cols cols-6040">
+    <div>
+      <h3>Growth strategy</h3>
+      <p>When the array is full and a new element must be added:</p>
+      <ul>
+        <li>Allocate a new array of <code>k * current_capacity</code> (typically k = 2)</li>
+        <li>Copy all existing elements to the new array</li>
+        <li>Free the old array and insert the new element</li>
+      </ul>
+      <h3>Size vs capacity</h3>
+      <pre><code>Capacity: 8    Size: 5
+
+[ 10 ][ 25 ][ 37 ][ 42 ][ 58 ][    ][    ][    ]
+                                ▲ size       ▲ capacity</code></pre>
+    </div>
+    <div>
+      <h3>Key operations</h3>
+      <table>
+        <thead><tr><th>Operation</th><th>Average</th><th>Worst</th></tr></thead>
+        <tbody>
+          <tr><td>Access by index</td><td><span class="g">O(1)</span></td><td>O(1)</td></tr>
+          <tr><td>Push back</td><td><span class="g">O(1)*</span></td><td>O(n)</td></tr>
+          <tr><td>Pop back</td><td><span class="g">O(1)</span></td><td>O(1)</td></tr>
+          <tr><td>Insert at index</td><td><span class="r">O(n)</span></td><td>O(n)</td></tr>
+          <tr><td>Delete at index</td><td><span class="r">O(n)</span></td><td>O(n)</td></tr>
+          <tr><td>Search (unsorted)</td><td><span class="r">O(n)</span></td><td>O(n)</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.45em; color:var(--muted); margin-top:.2em">*Amortised — resize triggers full copy</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 06 — Amortised Analysis
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">06</span>
+    <h2>Amortised Analysis of Dynamic Arrays</h2>
+  </div>
+  <div class="cols cols-2">
+    <div>
+      <h3>The doubling argument</h3>
+      <p>When capacity doubles on overflow, the total cost of <code>n</code> push-back operations is <code>O(n)</code>, giving an <em>amortised</em> cost of <code>O(1)</code> per operation.</p>
+      <h3>Proof sketch (aggregate method)</h3>
+      <pre><code>Operations: 1  2  3  4  5  6  7  8  9
+Cost:       1  1  1  1  1  1  1  1  1  (inserts)
+Resize at:        +2    +4          +8 (copies)
+
+Total for n inserts:
+  n (inserts) + 1 + 2 + 4 + ... + n
+= n + (2n - 1)
+= 3n - 1 = O(n)
+
+Amortised per insert = O(n)/n = O(1)</code></pre>
+    </div>
+    <div>
+      <h3>Growth factor trade-offs</h3>
+      <div class="card amber" style="margin-bottom:.3em">
+        <h3>2x growth</h3>
+        <p>Fewer reallocations; simple bit-shift. Up to 50% wasted space.</p>
+        <p style="margin-top:.2em"><span class="pill amber">GCC libstdc++</span></p>
+      </div>
+      <div class="card green" style="margin-bottom:.3em">
+        <h3>1.5x growth</h3>
+        <p>Less wasted space (~33% max). More frequent reallocations.</p>
+        <p style="margin-top:.2em"><span class="pill green">MSVC</span> <span class="pill green">Java ArrayList</span></p>
+      </div>
+      <div class="card purple">
+        <h3>~1.125x growth</h3>
+        <p>Minimal waste. Very frequent reallocations for small lists.</p>
+        <p style="margin-top:.2em"><span class="pill purple">Python list</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 07 — Singly Linked Lists
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">07</span>
+    <h2>Singly Linked Lists</h2>
+  </div>
+  <p>A sequence of nodes where each node stores a value and a pointer to the next node. The last node points to <code>NULL</code>.</p>
+  <div class="cols cols-2">
+    <div>
+      <h3>Node structure</h3>
+      <pre><code class="language-c">struct Node {
+    int   data;
+    Node* next;
+};</code></pre>
+      <h3>Memory layout</h3>
+      <!-- SVG linked list diagram -->
+      <svg viewBox="0 0 520 70" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;margin-top:.3em">
+        <defs>
+          <marker id="arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#4ecb8d"/>
+          </marker>
+        </defs>
+        <!-- Node 1 -->
+        <rect x="5" y="10" width="90" height="45" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="35" y="30" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">10</text>
+        <text x="75" y="30" font-family="'JetBrains Mono',monospace" font-size="10" fill="#4ecb8d" text-anchor="middle">next</text>
+        <text x="50" y="50" font-family="'JetBrains Mono',monospace" font-size="8" fill="#8888a8" text-anchor="middle">0x2A00</text>
+        <line x1="95" y1="28" x2="125" y2="28" stroke="#4ecb8d" stroke-width="2" marker-end="url(#arrowG)"/>
+        <!-- Node 2 -->
+        <rect x="130" y="10" width="90" height="45" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="160" y="30" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">25</text>
+        <text x="200" y="30" font-family="'JetBrains Mono',monospace" font-size="10" fill="#4ecb8d" text-anchor="middle">next</text>
+        <text x="175" y="50" font-family="'JetBrains Mono',monospace" font-size="8" fill="#8888a8" text-anchor="middle">0x3F10</text>
+        <line x1="220" y1="28" x2="250" y2="28" stroke="#4ecb8d" stroke-width="2" marker-end="url(#arrowG)"/>
+        <!-- Node 3 -->
+        <rect x="255" y="10" width="90" height="45" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="285" y="30" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">37</text>
+        <text x="325" y="30" font-family="'JetBrains Mono',monospace" font-size="10" fill="#4ecb8d" text-anchor="middle">next</text>
+        <text x="300" y="50" font-family="'JetBrains Mono',monospace" font-size="8" fill="#8888a8" text-anchor="middle">0x1B80</text>
+        <line x1="345" y1="28" x2="375" y2="28" stroke="#4ecb8d" stroke-width="2" marker-end="url(#arrowG)"/>
+        <!-- Node 4 -->
+        <rect x="380" y="10" width="90" height="45" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="410" y="30" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">42</text>
+        <text x="450" y="30" font-family="'JetBrains Mono',monospace" font-size="10" fill="#f87171" text-anchor="middle">NULL</text>
+        <text x="425" y="50" font-family="'JetBrains Mono',monospace" font-size="8" fill="#8888a8" text-anchor="middle">0x4C20</text>
+        <!-- Head label -->
+        <text x="50" y="7" font-family="'JetBrains Mono',monospace" font-size="9" fill="#a78bfa" text-anchor="middle">head</text>
+      </svg>
+    </div>
+    <div>
+      <h3>Characteristics</h3>
+      <ul>
+        <li><span class="r">O(n) access</span> — must traverse from head to reach element <code>i</code></li>
+        <li><span class="g">O(1) insert/delete at head</span> — just update the head pointer</li>
+        <li><span class="r">O(n) insert/delete at position</span> — must traverse to predecessor</li>
+        <li>No wasted capacity — each node allocated individually</li>
+        <li>Extra 8 bytes per node (one pointer on 64-bit)</li>
+        <li>No reallocation — the list never copies elements</li>
+      </ul>
+      <div class="card blue" style="margin-top:0.3em">
+        <p>Nodes are scattered across the heap — addresses are not sequential. Every traversal step is potentially a cache miss.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 08 — Singly Linked List Operations
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">08</span>
+    <h2>Singly Linked List Operations</h2>
+  </div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Insertion at head — O(1)</h3>
+      <pre><code class="language-c">Node* insert_head(Node* head, int value) {
+    Node* n = malloc(sizeof(Node));
+    n->data = value;
+    n->next = head;
+    return n;  // new head
+}</code></pre>
+      <h3>Insertion after a given node — O(1)</h3>
+      <pre><code class="language-c">void insert_after(Node* prev, int value) {
+    Node* n = malloc(sizeof(Node));
+    n->data = value;
+    n->next = prev->next;
+    prev->next = n;
+}</code></pre>
+    </div>
+    <div>
+      <h3>Deletion after a node — O(1)</h3>
+      <pre><code class="language-c">void delete_after(Node* prev) {
+    Node* target = prev->next;
+    prev->next = target->next;
+    free(target);
+}</code></pre>
+      <h3>Traversal — O(n)</h3>
+      <pre><code class="language-c">void print_list(Node* head) {
+    Node* curr = head;
+    while (curr != NULL) {
+        printf("%d -> ", curr->data);
+        curr = curr->next;
+    }
+    printf("NULL\n");
+}</code></pre>
+    </div>
+  </div>
+  <div class="card amber" style="margin-top:0.3em">
+    <p><strong style="color:var(--amber)">Key insight:</strong> finding the predecessor is the bottleneck. Doubly linked lists solve this by storing a <code>prev</code> pointer.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 09 — Doubly Linked Lists
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">09</span>
+    <h2>Doubly Linked Lists</h2>
+  </div>
+  <p>Each node stores pointers to both the next and previous nodes, enabling bidirectional traversal.</p>
+  <div class="cols cols-2">
+    <div>
+      <h3>Node structure</h3>
+      <pre><code class="language-c">struct DNode {
+    int    data;
+    DNode* prev;
+    DNode* next;
+};</code></pre>
+      <h3>Memory layout</h3>
+      <svg viewBox="0 0 480 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;margin-top:.3em">
+        <defs>
+          <marker id="arrowR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#4ecb8d"/>
+          </marker>
+          <marker id="arrowL" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto">
+            <path d="M8,0 L8,6 L0,3 z" fill="#a78bfa"/>
+          </marker>
+        </defs>
+        <text x="10" y="15" font-family="'JetBrains Mono',monospace" font-size="9" fill="#f87171">NULL</text>
+        <!-- Node 1 -->
+        <rect x="60" y="20" width="100" height="40" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="110" y="44" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">10</text>
+        <text x="110" y="56" font-family="'JetBrains Mono',monospace" font-size="8" fill="#8888a8" text-anchor="middle">head</text>
+        <line x1="40" y1="34" x2="58" y2="34" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowL)"/>
+        <!-- forward arrow -->
+        <line x1="160" y1="34" x2="185" y2="34" stroke="#4ecb8d" stroke-width="1.5" marker-end="url(#arrowR)"/>
+        <!-- Node 2 -->
+        <rect x="190" y="20" width="100" height="40" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="240" y="44" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">25</text>
+        <line x1="190" y1="44" x2="162" y2="44" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowL)"/>
+        <line x1="290" y1="34" x2="315" y2="34" stroke="#4ecb8d" stroke-width="1.5" marker-end="url(#arrowR)"/>
+        <!-- Node 3 -->
+        <rect x="320" y="20" width="100" height="40" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="370" y="44" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">37</text>
+        <text x="370" y="56" font-family="'JetBrains Mono',monospace" font-size="8" fill="#8888a8" text-anchor="middle">tail</text>
+        <line x1="320" y1="44" x2="292" y2="44" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowL)"/>
+        <text x="435" y="38" font-family="'JetBrains Mono',monospace" font-size="9" fill="#f87171">NULL</text>
+      </svg>
+    </div>
+    <div>
+      <h3>Advantages over singly linked</h3>
+      <ul>
+        <li><span class="g">O(1) delete given a node pointer</span> — no need to find predecessor</li>
+        <li><span class="g">Backward traversal</span> — iterate from tail to head</li>
+        <li><span class="g">O(1) insert before a given node</span> — direct access to predecessor</li>
+        <li>Easier LRU cache, undo/redo implementation</li>
+      </ul>
+      <h3>Cost</h3>
+      <ul>
+        <li><span class="r">Two pointers per node</span> — 16 bytes overhead on 64-bit</li>
+        <li><span class="r">More complex updates</span> — four pointer changes per insert/delete</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 10 — Sentinel Nodes
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">10</span>
+    <h2>Sentinel Nodes</h2>
+  </div>
+  <p>A sentinel (dummy) node simplifies boundary conditions by eliminating NULL checks. Used with doubly linked lists.</p>
+  <div class="cols cols-2">
+    <div>
+      <h3>Without sentinel</h3>
+      <p>Every operation must check for empty list, head insert, and tail insert as special cases.</p>
+      <h3>With sentinel</h3>
+      <pre><code>Empty list:
+  sentinel.next = sentinel
+  sentinel.prev = sentinel
+
+After inserting 10, 25, 37:
+  SEN ──▶ 10 ──▶ 25 ──▶ 37 ──▶ SEN
+  SEN ◀── 10 ◀── 25 ◀── 37 ◀── SEN</code></pre>
+    </div>
+    <div>
+      <h3>Simplified insertion</h3>
+      <pre><code class="language-c">// Insert after any node — no NULL checks
+void insert_after(DNode* node, int val) {
+    DNode* n = malloc(sizeof(DNode));
+    n->data       = val;
+    n->next       = node->next;
+    n->prev       = node;
+    node->next->prev = n;
+    node->next       = n;
+}</code></pre>
+      <div class="card green" style="margin-top:0.4em">
+        <p><code>node->next</code> is always valid — it may be the sentinel itself. No special cases needed.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card blue" style="margin-top:0.3em">
+    <p>The Linux kernel's <code>list_head</code> uses sentinel-based circular doubly linked lists throughout. See <code>include/linux/list.h</code>.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 11 — Circular Linked Lists
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">11</span>
+    <h2>Circular Linked Lists</h2>
+  </div>
+  <p>The last node points back to the first, forming a cycle. Can be singly or doubly linked.</p>
+  <div class="cols cols-2">
+    <div>
+      <h3>Singly circular</h3>
+      <svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+        <defs>
+          <marker id="arC" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#4ecb8d"/>
+          </marker>
+        </defs>
+        <rect x="30" y="30" width="70" height="35" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="65" y="52" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">10</text>
+        <rect x="140" y="30" width="70" height="35" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="175" y="52" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">25</text>
+        <rect x="250" y="30" width="70" height="35" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="285" y="52" font-family="'JetBrains Mono',monospace" font-size="13" fill="#f5a623" text-anchor="middle">37</text>
+        <line x1="100" y1="47" x2="138" y2="47" stroke="#4ecb8d" stroke-width="1.5" marker-end="url(#arC)"/>
+        <line x1="210" y1="47" x2="248" y2="47" stroke="#4ecb8d" stroke-width="1.5" marker-end="url(#arC)"/>
+        <!-- curved back arrow -->
+        <path d="M320,47 Q340,47 340,85 Q340,105 180,105 Q20,105 20,85 Q20,55 28,50" fill="none" stroke="#4ecb8d" stroke-width="1.5" marker-end="url(#arC)"/>
+      </svg>
+      <h3>Traversal</h3>
+      <pre><code class="language-c">void print_circular(Node* start) {
+    if (!start) return;
+    Node* curr = start;
+    do {
+        printf("%d -> ", curr->data);
+        curr = curr->next;
+    } while (curr != start);
+}</code></pre>
+    </div>
+    <div>
+      <h3>Use cases</h3>
+      <div style="display:flex; flex-direction:column; gap:.25em; margin-top:0.2em">
+        <div class="card amber">
+          <h3>Round-robin scheduling</h3>
+          <p>Process scheduler cycles through tasks endlessly</p>
+        </div>
+        <div class="card green">
+          <h3>Circular buffers</h3>
+          <p>Fixed-size ring buffer for streaming data</p>
+        </div>
+        <div class="card purple">
+          <h3>Josephus problem</h3>
+          <p>Classic elimination game, naturally modelled as a circle</p>
+        </div>
+        <div class="card blue">
+          <h3>Media playlists</h3>
+          <p>Loop playback without special end-of-list logic</p>
+        </div>
+        <div class="card red">
+          <h3>Token ring networks</h3>
+          <p>Token passed around a circular topology</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 12 — Skip Lists
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">12</span>
+    <h2>Skip Lists</h2>
+  </div>
+  <p>A probabilistic data structure that layers multiple sorted linked lists on top of each other. Invented by William Pugh (1989).</p>
+  <div class="cols cols-6040">
+    <div>
+      <h3>Structure</h3>
+      <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+        <defs>
+          <marker id="arS" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#4ecb8d"/>
+          </marker>
+        </defs>
+        <!-- Level labels -->
+        <text x="5" y="20" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8888a8">L3</text>
+        <text x="5" y="55" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8888a8">L2</text>
+        <text x="5" y="90" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8888a8">L1</text>
+        <text x="5" y="125" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8888a8">L0</text>
+        <!-- Head nodes -->
+        <rect x="30" y="8" width="30" height="18" rx="3" fill="#2e1e00" stroke="#f5a623"/>
+        <text x="45" y="21" font-family="'JetBrains Mono',monospace" font-size="8" fill="#f5a623" text-anchor="middle">H</text>
+        <rect x="30" y="43" width="30" height="18" rx="3" fill="#2e1e00" stroke="#f5a623"/>
+        <text x="45" y="56" font-family="'JetBrains Mono',monospace" font-size="8" fill="#f5a623" text-anchor="middle">H</text>
+        <rect x="30" y="78" width="30" height="18" rx="3" fill="#2e1e00" stroke="#f5a623"/>
+        <text x="45" y="91" font-family="'JetBrains Mono',monospace" font-size="8" fill="#f5a623" text-anchor="middle">H</text>
+        <rect x="30" y="113" width="30" height="18" rx="3" fill="#2e1e00" stroke="#f5a623"/>
+        <text x="45" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#f5a623" text-anchor="middle">H</text>
+        <!-- Level 3: H -> 42 -> NULL -->
+        <line x1="60" y1="17" x2="310" y2="17" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="315" y="8" width="30" height="18" rx="3" fill="#1a2a1a" stroke="#4ecb8d"/>
+        <text x="330" y="21" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4ecb8d" text-anchor="middle">42</text>
+        <text x="380" y="21" font-family="'JetBrains Mono',monospace" font-size="8" fill="#f87171">NULL</text>
+        <!-- Level 2: H -> 17 -> 42 -> NULL -->
+        <line x1="60" y1="52" x2="155" y2="52" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="160" y="43" width="30" height="18" rx="3" fill="#1a1a2a" stroke="#a78bfa"/>
+        <text x="175" y="56" font-family="'JetBrains Mono',monospace" font-size="8" fill="#a78bfa" text-anchor="middle">17</text>
+        <line x1="190" y1="52" x2="310" y2="52" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="315" y="43" width="30" height="18" rx="3" fill="#1a2a1a" stroke="#4ecb8d"/>
+        <text x="330" y="56" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4ecb8d" text-anchor="middle">42</text>
+        <text x="380" y="56" font-family="'JetBrains Mono',monospace" font-size="8" fill="#f87171">NULL</text>
+        <!-- Level 1: H -> 6 -> 17 -> 25 -> 42 -> 58 -> NULL -->
+        <line x1="60" y1="87" x2="85" y2="87" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="90" y="78" width="30" height="18" rx="3" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="105" y="91" font-family="'JetBrains Mono',monospace" font-size="8" fill="#e8e8f0" text-anchor="middle">6</text>
+        <line x1="120" y1="87" x2="155" y2="87" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="160" y="78" width="30" height="18" rx="3" fill="#1a1a2a" stroke="#a78bfa"/>
+        <text x="175" y="91" font-family="'JetBrains Mono',monospace" font-size="8" fill="#a78bfa" text-anchor="middle">17</text>
+        <line x1="190" y1="87" x2="225" y2="87" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="230" y="78" width="30" height="18" rx="3" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="245" y="91" font-family="'JetBrains Mono',monospace" font-size="8" fill="#e8e8f0" text-anchor="middle">25</text>
+        <line x1="260" y1="87" x2="310" y2="87" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="315" y="78" width="30" height="18" rx="3" fill="#1a2a1a" stroke="#4ecb8d"/>
+        <text x="330" y="91" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4ecb8d" text-anchor="middle">42</text>
+        <line x1="345" y1="87" x2="380" y2="87" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="385" y="78" width="30" height="18" rx="3" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="400" y="91" font-family="'JetBrains Mono',monospace" font-size="8" fill="#e8e8f0" text-anchor="middle">58</text>
+        <text x="440" y="91" font-family="'JetBrains Mono',monospace" font-size="8" fill="#f87171">NULL</text>
+        <!-- Level 0: all nodes -->
+        <line x1="60" y1="122" x2="85" y2="122" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="90" y="113" width="30" height="18" rx="3" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="105" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#e8e8f0" text-anchor="middle">6</text>
+        <line x1="120" y1="122" x2="155" y2="122" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="160" y="113" width="30" height="18" rx="3" fill="#1a1a2a" stroke="#a78bfa"/>
+        <text x="175" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#a78bfa" text-anchor="middle">17</text>
+        <line x1="190" y1="122" x2="225" y2="122" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="230" y="113" width="30" height="18" rx="3" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="245" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#e8e8f0" text-anchor="middle">25</text>
+        <line x1="260" y1="122" x2="268" y2="122" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="273" y="113" width="30" height="18" rx="3" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="288" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#e8e8f0" text-anchor="middle">33</text>
+        <line x1="303" y1="122" x2="310" y2="122" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="315" y="113" width="30" height="18" rx="3" fill="#1a2a1a" stroke="#4ecb8d"/>
+        <text x="330" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#4ecb8d" text-anchor="middle">42</text>
+        <line x1="345" y1="122" x2="380" y2="122" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="385" y="113" width="30" height="18" rx="3" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="400" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#e8e8f0" text-anchor="middle">58</text>
+        <line x1="415" y1="122" x2="438" y2="122" stroke="#4ecb8d" stroke-width="1" marker-end="url(#arS)"/>
+        <rect x="443" y="113" width="30" height="18" rx="3" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="458" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#e8e8f0" text-anchor="middle">73</text>
+        <text x="490" y="126" font-family="'JetBrains Mono',monospace" font-size="8" fill="#f87171">N</text>
+      </svg>
+    </div>
+    <div>
+      <h3>How it works</h3>
+      <ul>
+        <li>Level 0 is a standard sorted linked list containing all elements</li>
+        <li>Each higher level is a "fast lane" containing a random subset</li>
+        <li>A node is promoted with probability <code>p</code> (typically 0.5)</li>
+        <li>Expected height: <code>O(log n)</code></li>
+      </ul>
+      <h3>Why skip lists?</h3>
+      <ul>
+        <li><span class="g">Simpler to implement</span> than balanced BSTs</li>
+        <li><span class="g">Lock-free variants</span> are easier than lock-free trees</li>
+        <li><span class="g">Expected O(log n)</span> search, insert, delete</li>
+        <li>No rotations — balancing is probabilistic</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 13 — Skip List Operations
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">13</span>
+    <h2>Skip List Operations</h2>
+  </div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Search — expected O(log n)</h3>
+      <p>Start at the highest level. Move right while the next node's key is less than the target. Drop down one level and repeat.</p>
+      <pre><code>Search for 33:
+
+L3: H ─────────────── 42 (too far, drop)
+L2: H ────── 17 ───── 42 (too far, drop)
+L1: ... 17 ── 25 ──── 42 (too far, drop)
+L0: ... 25 ── 33 FOUND</code></pre>
+      <h3>Insert</h3>
+      <ul>
+        <li>Search for position (track predecessors at each level)</li>
+        <li>Flip a coin repeatedly to determine the new node's height</li>
+        <li>Splice the node into each level up to its height</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Complexity</h3>
+      <table>
+        <thead><tr><th>Operation</th><th>Expected</th><th>Worst</th></tr></thead>
+        <tbody>
+          <tr><td>Search</td><td><span class="g">O(log n)</span></td><td>O(n)</td></tr>
+          <tr><td>Insert</td><td><span class="g">O(log n)</span></td><td>O(n)</td></tr>
+          <tr><td>Delete</td><td><span class="g">O(log n)</span></td><td>O(n)</td></tr>
+          <tr><td>Space</td><td>O(n)</td><td>O(n log n)</td></tr>
+        </tbody>
+      </table>
+      <h3>Delete</h3>
+      <ul>
+        <li>Search for the node (track predecessors at each level)</li>
+        <li>Remove the node from every level it appears in</li>
+        <li>If top level is now empty, reduce max level</li>
+      </ul>
+      <div class="card green" style="margin-top:.3em">
+        <p>Redis sorted sets (<code>ZSET</code>) use skip lists internally. LevelDB and RocksDB use skip lists for their in-memory memtable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 14 — XOR Linked Lists
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">14</span>
+    <h2>XOR Linked Lists</h2>
+  </div>
+  <p>A memory-efficient doubly linked list that stores only one pointer per node instead of two, using the XOR of the previous and next addresses.</p>
+  <div class="cols cols-2">
+    <div>
+      <h3>The trick</h3>
+      <pre><code>Each node stores:
+  link = prev_addr XOR next_addr
+
+Forward traversal:
+  next = prev_addr XOR node->link
+
+Backward traversal:
+  prev = next_addr XOR node->link</code></pre>
+      <h3>Example</h3>
+      <pre><code>Node A         Node B         Node C
+link = 0^B     link = A^C     link = B^0
+     = B            = A^C          = B
+
+Forward from A (prev=0):
+  next = 0 XOR B = B
+From B (prev=A):
+  next = A XOR (A^C) = C
+From C (prev=B):
+  next = B XOR B = 0 (end)</code></pre>
+    </div>
+    <div>
+      <h3>Trade-offs</h3>
+      <div class="card green" style="margin-bottom:.3em">
+        <h3>Advantages</h3>
+        <ul>
+          <li>Halves pointer overhead — one pointer per node vs two</li>
+          <li>Bidirectional traversal — same as doubly linked</li>
+        </ul>
+      </div>
+      <div class="card red">
+        <h3>Disadvantages</h3>
+        <ul>
+          <li>Incompatible with garbage collection — XOR-encoded pointers are invisible to GC</li>
+          <li>Cannot use in managed languages — only C/C++ with raw pointers</li>
+          <li>Debugging is painful — pointer values not directly inspectable</li>
+          <li>Rarely used in practice — savings seldom justify complexity</li>
+        </ul>
+      </div>
+      <div class="card amber" style="margin-top:.3em">
+        <p>XOR linked lists are a clever interview topic but almost never appear in production code. Prefer standard doubly linked lists.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 15 — Unrolled Linked Lists
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">15</span>
+    <h2>Unrolled Linked Lists</h2>
+  </div>
+  <p>A hybrid that stores multiple elements per node, combining array cache friendliness with linked list insertion flexibility.</p>
+  <div class="cols cols-6040">
+    <div>
+      <h3>Structure</h3>
+      <svg viewBox="0 0 480 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+        <defs>
+          <marker id="arU" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#4ecb8d"/>
+          </marker>
+        </defs>
+        <!-- Block 1 -->
+        <rect x="5" y="10" width="130" height="50" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="15" y="28" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8888a8">count: 4</text>
+        <rect x="12" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#f5a623"/>
+        <text x="25" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#f5a623" text-anchor="middle">10</text>
+        <rect x="40" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#f5a623"/>
+        <text x="53" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#f5a623" text-anchor="middle">25</text>
+        <rect x="68" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#f5a623"/>
+        <text x="81" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#f5a623" text-anchor="middle">37</text>
+        <rect x="96" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#f5a623"/>
+        <text x="109" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#f5a623" text-anchor="middle">42</text>
+        <line x1="135" y1="35" x2="160" y2="35" stroke="#4ecb8d" stroke-width="1.5" marker-end="url(#arU)"/>
+        <!-- Block 2 -->
+        <rect x="165" y="10" width="130" height="50" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="175" y="28" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8888a8">count: 4</text>
+        <rect x="172" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#4ecb8d"/>
+        <text x="185" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#4ecb8d" text-anchor="middle">58</text>
+        <rect x="200" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#4ecb8d"/>
+        <text x="213" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#4ecb8d" text-anchor="middle">63</text>
+        <rect x="228" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#4ecb8d"/>
+        <text x="241" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#4ecb8d" text-anchor="middle">71</text>
+        <rect x="256" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#4ecb8d"/>
+        <text x="269" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#4ecb8d" text-anchor="middle">80</text>
+        <line x1="295" y1="35" x2="320" y2="35" stroke="#4ecb8d" stroke-width="1.5" marker-end="url(#arU)"/>
+        <!-- Block 3 -->
+        <rect x="325" y="10" width="130" height="50" rx="5" fill="#1a1a28" stroke="#2a2a3a"/>
+        <text x="335" y="28" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8888a8">count: 2</text>
+        <rect x="332" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#a78bfa"/>
+        <text x="345" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#a78bfa" text-anchor="middle">85</text>
+        <rect x="360" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#a78bfa"/>
+        <text x="373" y="48" font-family="'JetBrains Mono',monospace" font-size="9" fill="#a78bfa" text-anchor="middle">91</text>
+        <rect x="388" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#2a2a3a"/>
+        <rect x="416" y="35" width="25" height="18" rx="2" fill="#181824" stroke="#2a2a3a"/>
+      </svg>
+      <h3>How it works</h3>
+      <ul>
+        <li>Each node holds an array of up to <code>B</code> elements (block size, e.g. 4–16)</li>
+        <li>Nodes are linked together like a standard linked list</li>
+        <li>Overflow: node splits into two half-full nodes</li>
+        <li>Underflow: node merges with a neighbour</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Performance comparison</h3>
+      <table>
+        <thead><tr><th>Operation</th><th>Unrolled</th><th>Standard</th></tr></thead>
+        <tbody>
+          <tr><td>Traversal</td><td><span class="g">Cache-friendly</span></td><td><span class="r">Pointer chasing</span></td></tr>
+          <tr><td>Search</td><td>O(n) better constants</td><td>O(n)</td></tr>
+          <tr><td>Insert</td><td>O(B) shift + O(1) splice</td><td>O(1) at known pos</td></tr>
+          <tr><td>Overhead</td><td>1 ptr per B elements</td><td>1–2 ptrs per element</td></tr>
+        </tbody>
+      </table>
+      <div class="card blue" style="margin-top:.4em">
+        <p>Used in text editors (rope variants), B+ tree leaf chains, and gap buffer hybrids. Delivers 2–5x speedup over standard linked lists for sequential access.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 16 — Arrays vs Linked Lists — Performance Comparison
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">16</span>
+    <h2>Arrays vs Linked Lists — Performance Comparison</h2>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Operation</th><th>Array</th><th>Dynamic array</th><th>Singly linked</th><th>Doubly linked</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Access by index</td><td><span class="g">O(1)</span></td><td><span class="g">O(1)</span></td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td></tr>
+      <tr><td>Search (unsorted)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td></tr>
+      <tr><td>Search (sorted)</td><td><span class="g">O(log n)</span></td><td><span class="g">O(log n)</span></td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td></tr>
+      <tr><td>Insert at front</td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td><td><span class="g">O(1)</span></td><td><span class="g">O(1)</span></td></tr>
+      <tr><td>Insert at back</td><td>N/A</td><td><span class="g">O(1)*</span></td><td><span class="r">O(n)</span></td><td><span class="g">O(1)</span></td></tr>
+      <tr><td>Insert at middle</td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td></tr>
+      <tr><td>Delete at front</td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td><td><span class="g">O(1)</span></td><td><span class="g">O(1)</span></td></tr>
+      <tr><td>Delete at back</td><td>N/A</td><td><span class="g">O(1)</span></td><td><span class="r">O(n)</span></td><td><span class="g">O(1)</span></td></tr>
+      <tr><td>Delete given node</td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td><td><span class="r">O(n)</span></td><td><span class="g">O(1)</span></td></tr>
+      <tr><td>Memory per element</td><td><span class="g">0 extra</span></td><td><span class="g">0 extra</span></td><td>+8 bytes</td><td>+16 bytes</td></tr>
+      <tr><td>Cache performance</td><td><span class="g">Excellent</span></td><td><span class="g">Excellent</span></td><td><span class="r">Poor</span></td><td><span class="r">Poor</span></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:.42em; color:var(--muted);">*Amortised O(1) for dynamic array push-back.</p>
+  <div class="card amber" style="margin-top:0.3em">
+    <p><strong style="color:var(--amber)">In practice, arrays win more often than theory suggests.</strong> Cache locality dominates modern hardware. Linked lists only outperform when insertions/deletions at arbitrary positions are the primary operation and elements are large.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 17 — Real-World Implementations
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">17</span>
+    <h2>Real-World Implementations</h2>
+  </div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3>C++ <code>std::vector</code></h3>
+      <ul>
+        <li>Contiguous storage guarantee</li>
+        <li>Growth: 2x (GCC) or 1.5x (MSVC)</li>
+        <li><code>push_back</code> amortised O(1)</li>
+        <li>Iterators invalidated on realloc</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Java <code>ArrayList</code></h3>
+      <ul>
+        <li>Backed by <code>Object[]</code>; growth 1.5x</li>
+        <li>Autoboxing overhead for primitives</li>
+        <li><code>LinkedList</code> almost never the right choice</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>Python <code>list</code></h3>
+      <ul>
+        <li>Array of pointers; growth ~1.125x</li>
+        <li><code>append()</code> amortised O(1)</li>
+        <li><code>deque</code> = unrolled linked list</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols cols-2" style="margin-top:.4em">
+    <div class="card blue">
+      <h3>Go <code>slice</code></h3>
+      <ul>
+        <li>Pointer + length + capacity triple</li>
+        <li>Growth: 2x when small, tapering to 1.25x</li>
+        <li><code>append()</code> may return new header on realloc</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h3>Rust <code>Vec&lt;T&gt;</code></h3>
+      <ul>
+        <li>Heap-allocated dynamic array; growth 2x</li>
+        <li>Ownership prevents iterator invalidation at compile time</li>
+        <li><code>VecDeque&lt;T&gt;</code> = ring buffer for front/back ops</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 18 — Cache Performance & Memory Fragmentation
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">18</span>
+    <h2>Cache Performance &amp; Memory Fragmentation</h2>
+  </div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Why arrays dominate in benchmarks</h3>
+      <div style="display:flex; flex-direction:column; gap:.25em; margin-top:0.2em">
+        <div style="display:flex; align-items:flex-start; gap:.5em; background:var(--bg3); border-radius:6px; padding:.3em .5em; font-size:.5em; border:1px solid var(--border);">
+          <span style="color:var(--amber); font-weight:600; min-width:1.2em;">HW</span>
+          <span style="color:var(--text); line-height:1.4"><strong style="color:var(--amber)">Hardware prefetcher</strong> — detects stride patterns and preloads cache lines</span>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:.5em; background:var(--bg3); border-radius:6px; padding:.3em .5em; font-size:.5em; border:1px solid var(--border);">
+          <span style="color:var(--green); font-weight:600; min-width:1.2em;">TLB</span>
+          <span style="color:var(--text); line-height:1.4"><strong style="color:var(--green)">TLB efficiency</strong> — contiguous arrays span fewer virtual memory pages</span>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:.5em; background:var(--bg3); border-radius:6px; padding:.3em .5em; font-size:.5em; border:1px solid var(--border);">
+          <span style="color:var(--purple); font-weight:600; min-width:1.2em;">BP</span>
+          <span style="color:var(--text); line-height:1.4"><strong style="color:var(--purple)">Branch prediction</strong> — loop-based array traversal is highly predictable</span>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:.5em; background:var(--bg3); border-radius:6px; padding:.3em .5em; font-size:.5em; border:1px solid var(--border);">
+          <span style="color:var(--blue); font-weight:600; min-width:1.2em;">SIMD</span>
+          <span style="color:var(--text); line-height:1.4"><strong style="color:var(--blue)">SIMD vectorisation</strong> — compilers process 4–8 elements per instruction</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>The linked list cache problem</h3>
+      <ul>
+        <li>Each node may reside on a different cache line — <em>pointer chasing</em> defeats prefetch</li>
+        <li>Allocator scatters nodes across pages — poor TLB hit rate</li>
+        <li>Small nodes waste most of a 64-byte cache line</li>
+        <li>Traversal can be <span class="r">10–100x slower</span> than array traversal</li>
+      </ul>
+      <h3>Mitigations</h3>
+      <ul>
+        <li><span class="a">Arena/pool allocators</span> — allocate nodes from a contiguous block; restores locality</li>
+        <li><span class="g">Unrolled linked lists</span> — amortise pointer overhead across multiple elements</li>
+        <li><span class="p">Intrusive lists</span> — embed the link inside the data structure (Linux kernel pattern)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 19 — Applications & Use Cases
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">19</span>
+    <h2>Applications &amp; Use Cases</h2>
+  </div>
+  <div class="cols cols-3">
+    <div class="card amber">
+      <h3>Arrays / Dynamic arrays</h3>
+      <ul>
+        <li>Random access lookups (tables, matrices)</li>
+        <li>Sequential iteration (buffers, streams)</li>
+        <li>Known or predictable element count</li>
+        <li>Cache-critical workloads (numerics, games)</li>
+        <li>Minimal memory footprint needed</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Linked lists</h3>
+      <ul>
+        <li>Frequent insert/delete at arbitrary positions</li>
+        <li>Constant-time splicing of sub-lists</li>
+        <li>FIFO queues and deques</li>
+        <li>LRU caches (doubly linked + hash map)</li>
+        <li>Undo/redo stacks</li>
+        <li>Graph adjacency lists</li>
+        <li>OS kernel structures (task lists, drivers)</li>
+      </ul>
+    </div>
+    <div class="card purple">
+      <h3>Specialised variants</h3>
+      <ul>
+        <li><strong>Skip lists</strong> — sorted collections needing O(log n) ops; concurrent access (Redis ZSET)</li>
+        <li><strong>Unrolled lists</strong> — text editors, file system leaf chains</li>
+        <li><strong>Circular lists</strong> — round-robin schedulers, ring buffers</li>
+        <li><strong>Intrusive lists</strong> — OS kernels, zero-allocation designs</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card blue" style="margin-top:0.5em">
+    <p><strong style="color:var(--blue)">Decision heuristic:</strong> default to a dynamic array. Switch to a linked structure only when profiling shows that insert/delete cost dominates, or when you need O(1) splice/remove with a direct node reference.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  SLIDE 20 — Summary & Further Reading
+══════════════════════════════════════════════════════════════════ -->
+<section data-background-color="#0a0a0f">
+  <div class="slide-hdr">
+    <span class="tag">20</span>
+    <h2>Summary &amp; Further Reading</h2>
+  </div>
+  <div class="cols cols-2">
+    <div>
+      <h3>Key takeaways</h3>
+      <ul>
+        <li>Arrays provide <span class="g">O(1) access</span> and excellent cache performance — the default choice</li>
+        <li>Dynamic arrays give O(1) access + <span class="g">amortised O(1) append</span></li>
+        <li>Linked lists trade cache performance for <span class="g">O(1) insert/delete</span> at known positions</li>
+        <li>Doubly linked lists enable <span class="g">O(1) deletion given a node pointer</span> — essential for LRU caches</li>
+        <li>Skip lists offer <span class="g">O(log n) expected</span> performance with simpler concurrency than balanced trees</li>
+        <li>XOR and unrolled linked lists are niche optimisations — know they exist</li>
+        <li><span class="a">Cache locality dominates</span> real-world performance — profile before choosing a linked structure</li>
+        <li><span class="p">Arena allocators</span> can restore locality to linked structures when needed</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Recommended reading</h3>
+      <table>
+        <thead><tr><th>Source</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><span class="a">Cormen et al.</span></td><td><em>Introduction to Algorithms</em> (CLRS) — elementary data structures and amortised analysis</td></tr>
+          <tr><td><span class="a">Pugh, W.</span></td><td>"Skip Lists: A Probabilistic Alternative to Balanced Trees" (1990)</td></tr>
+          <tr><td><span class="a">Stroustrup, B.</span></td><td>"Why you should avoid Linked Lists" — cache effects on vector vs list</td></tr>
+          <tr><td><span class="a">Linux kernel</span></td><td><code>include/linux/list.h</code> — intrusive doubly linked list</td></tr>
+          <tr><td><span class="a">Sedgewick &amp; Wayne</span></td><td><em>Algorithms</em>, 4th ed. — linked lists and dynamic arrays</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'fade',
+  transitionSpeed: 'fast',
+  controls: true,
+  progress: true,
+  center: false,
+  width: 1100,
+  height: 900,
+  margin: 0.01,
+  plugins: [RevealHighlight],
+  highlight: { theme: 'monokai' }
+});
+</script>
+<script>
+(function(){
+  var h = Reveal.getConfig().height || 900;
+  var m = Reveal.getConfig().margin || 0.02;
+  var maxH = Math.floor(h * (1 - 2 * m)) + 'px';
+  function fixSlides(){
+    document.querySelectorAll('.reveal .slides>section,.reveal .slides>section>section').forEach(function(s){
+      s.style.display = 'block';
+      s.style.maxHeight = maxH;
+    });
+  }
+  Reveal.on('ready', fixSlides);
+  Reveal.on('slidechanged', fixSlides);
+})();
+</script>
+</body>
+</html>
